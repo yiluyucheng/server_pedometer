@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from .forms import *
-# Create your views here.
+import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
+from .models import *
+from django.core.paginator import Paginator
 
 
 def feed_back(steps, pain):
@@ -19,11 +21,38 @@ def feed_back(steps, pain):
     
     
     
-def step_counter(request):
-    form = StepForm()
+def homeview(request, glist=None):
+    # display table and seperate pages    
+    if glist is None:
+        session_list = Session.objects.all().order_by('-ids')
+    else:
+        session_list = glist
+    if session_list:
+        paginator = Paginator(session_list, 10)
+        page = request.GET.get('page')
+        page_obj = paginator.get_page(page)
+        return render(request, 'home.html',
+                      {'page_obj': page_obj, 'paginator': paginator,
+                       'is_paginated': True,})
+    else:
+        return render(request, 'home.html')    
+    
+    
+def step_counter(request):    
     if request.method == 'POST':
-        step = request.POST['Step']
-        pain = request.POST['Pain']
+        try:
+            req = json.loads(request.body)
+            step = req['Step']
+            pain = req['Pain']
+            ids = req['ids']
+        except:
+            ids = request.POST['ids']
+            step = request.POST['Step']
+            pain = request.POST['Pain']
         feedback = feed_back(int(step), int(pain))
-        return render(request, 'step_display.html', {'feedback': feedback,})
+        add_session = Session(ids=ids, step=step, pain=pain)
+        add_session.save()
+        return JsonResponse({"feedback": feedback,}) 
+    form = StepForm()
     return render(request, 'step_count.html', {'form': form,})
+ 
