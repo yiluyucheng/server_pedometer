@@ -12,34 +12,55 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Steps</th>
-            <th>Pain</th>
             <th>Date</th>
+            <th>Unique ID</th>
+            <th>Pain</th>
+            <th>Steps</th>                       
             <th>Distance</th>
             <th>Start</th>
             <th>End</th>
+            <th>Sex</th>
+            <th>Height</th>
+            <th>Age</th>
+            <th>Weight</th>
         </tr>
     </thead>
     <tbody>
      {% for gsm in page_obj %}
         <tr>
             <td>
+            {{ gsm.date }}
+            </td>
+            <td>
+            <a href="{% url 'index_view' %}?person={{ gsm.ids }}"  target="_blank">
             {{ gsm.ids }}    
             </td>
+            <td>
+            {{ gsm.pain }}            
+            </td>            
             <td>
             {{ gsm.step }}    
             </td>
             <td>
-            {{ gsm.pain }}
+            {{ gsm.distance }}
             </td>
             <td>
+            {{ gsm.start }}
             </td>
             <td>
+            {{ gsm.end }}
             </td>
             <td>
+            {{ gsm.sex }}
             </td>
             <td>
+            {{ gsm.height }}
+            </td>
+            <td>
+            {{ gsm.age }}
+            </td>
+            <td>
+            {{ gsm.weight }}
      {% endfor %}
         </tr>
     </tbody>            
